@@ -249,7 +249,10 @@ function RotatingSpiral({
   return (
     <div
       className="absolute inset-0 flex items-center justify-center"
-      style={{ perspective: "1600px" }}
+      style={{
+        perspective: "1600px",
+        transform: isMobile ? "translateY(-8%)" : "none",
+      }}
     >
       <div className="relative" style={{ transformStyle: "preserve-3d" }}>
         {spiralImages.map((img, i) => {
