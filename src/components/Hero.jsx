@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion, useAnimationFrame, useMotionValue, useTransform } from "framer-motion";
 
 function WaveBottom({ fill }) {
@@ -37,101 +38,74 @@ const spiralImages = [
   { src: "/images/headstand2.png", alt: "headstand" },
   { src: "/images/homepose2.png", alt: "homepose" },
   { src: "/images/homepose3.png", alt: "homepose3" },
-  
+
   // Add up to 4 more here as you get them - the spiral automatically
   // rebalances spacing/radius/size for whatever count is in this array.
 ];
 
-// These scale with spiralImages.length rather than being fixed numbers,
-// so the layout stays balanced whether there are 6 images or 10.
 const count = spiralImages.length;
-const BASE_RADIUS = 130;
-const RADIUS_STEP = Math.max(28, 260 / count); // tighter step as count grows, floor so it never collapses
-const MAX_RADIUS = BASE_RADIUS + RADIUS_STEP * (count - 1);
-const ANGLE_SPREAD = 360 * (1 + count * 0.08); // more images = slightly more wrap, keeps neighbors from overlapping
-const VERTICAL_STEP = Math.max(14, 160 / count); // vertical fan tightens as count grows
 
-// Image footprint also scales down modestly as count grows, so 10 images
-// don't individually claim as much room as 6 do - this is what keeps it
-// from feeling crowded at higher counts while staying larger than before
-// at the current 6.
-const IMG_W = Math.max(180, 280 - count * 8);
-const IMG_H = Math.round(IMG_W * 1.35);
+// Base (desktop) sizing - unchanged from before
+const BASE_RADIUS_DESKTOP = 130;
+const RADIUS_STEP_DESKTOP = Math.max(28, 260 / count);
+const IMG_W_DESKTOP = Math.max(180, 280 - count * 8);
 
-function RotatingSpiral() {
-  const angle = useMotionValue(0);
-
-  useAnimationFrame((_, delta) => {
-    angle.set(angle.get() + (delta / 1000) * 7);
-  });
-
-  return (
-    <div
-      className="absolute inset-0 flex items-center justify-center"
-      style={{ perspective: "1600px" }}
-    >
-      <div className="relative" style={{ transformStyle: "preserve-3d" }}>
-        {spiralImages.map((img, i) => {
-          const offsetAngle = (ANGLE_SPREAD / count) * i;
-          const radius = BASE_RADIUS + RADIUS_STEP * i;
-          const verticalOffset = (i - (count - 1) / 2) * VERTICAL_STEP;
-
-          return (
-            <SpiralItem
-              key={img.src}
-              img={img}
-              offsetAngle={offsetAngle}
-              radius={radius}
-              verticalOffset={verticalOffset}
-              ringAngle={angle}
-            />
-          );
-        })}
-      </div>
-    </div>
+// Small hook to track viewport width so the spiral can rescale live
+// (including on resize/orientation change), not just on first load.
+function useViewportWidth() {
+  const [width, setWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1024
   );
+
+  useEffect(() => {
+    const onResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  return width;
 }
 
-function SpiralItem({ img, offsetAngle, radius, verticalOffset, ringAngle }) {
-  const currentAngle = useTransform(ringAngle, (a) => a + offsetAngle);
-
-  const x = useTransform(currentAngle, (a) => radius * Math.sin((a * Math.PI) / 180));
-  const z = useTransform(currentAngle, (a) => radius * Math.cos((a * Math.PI) / 180));
-  const faceRotateY = useTransform(currentAngle, (a) => -a);
-
-  const opacity = useTransform(z, [-MAX_RADIUS, MAX_RADIUS], [0.3, 1]);
-  const scale = useTransform(z, [-MAX_RADIUS, MAX_RADIUS], [0.6, 1]);
-
-  return (
-    <motion.div
-      className="absolute top-1/2 left-1/2 rounded-2xl overflow-hidden shadow-2xl"
-      style={{
-        width: IMG_W,
-        height: IMG_H,
-        marginTop: -IMG_H / 2,
-        marginLeft: -IMG_W / 2,
-        x,
-        y: verticalOffset,
-        z,
-        rotateY: faceRotateY,
-        opacity,
-        scale,
-        transformStyle: "preserve-3d",
-      }}
-    >
-      <img src={img.src} alt={img.alt} className="w-full h-full object-cover" />
-    </motion.div>
-  );
+// Returns a single scale factor for the whole spiral geometry based on
+// viewport width, so radius/step/image size all shrink together and stay
+// proportional at any screen size, while still rotating in full 3D.
+function getSpiralScale(width) {
+  if (width < 400) return 0.45;
+  if (width < 640) return 0.55;
+  if (width < 768) return 0.7;
+  if (width < 1024) return 0.85;
+  return 1;
 }
 
 export default function Hero() {
+  const viewportWidth = useViewportWidth();
+  const scale = getSpiralScale(viewportWidth);
+
+  const BASE_RADIUS = BASE_RADIUS_DESKTOP * scale;
+  const RADIUS_STEP = RADIUS_STEP_DESKTOP * scale;
+  const MAX_RADIUS = BASE_RADIUS + RADIUS_STEP * (count - 1);
+  const ANGLE_SPREAD = 360 * (1 + count * 0.08);
+  const VERTICAL_STEP = Math.max(14, 160 / count) * scale;
+
+  const IMG_W = IMG_W_DESKTOP * scale;
+  const IMG_H = Math.round(IMG_W * 1.35);
+
   return (
     <section
       id="top"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{ backgroundColor: "#8d9fb4" }}
     >
-      <RotatingSpiral />
+      <RotatingSpiral
+        count={count}
+        BASE_RADIUS={BASE_RADIUS}
+        RADIUS_STEP={RADIUS_STEP}
+        MAX_RADIUS={MAX_RADIUS}
+        ANGLE_SPREAD={ANGLE_SPREAD}
+        VERTICAL_STEP={VERTICAL_STEP}
+        IMG_W={IMG_W}
+        IMG_H={IMG_H}
+      />
 
       <div
         className="absolute inset-0 z-[5]"
@@ -143,7 +117,7 @@ export default function Hero() {
 
       <div
         aria-hidden="true"
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl animate-breathe z-[6]"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85vw] h-[85vw] max-w-[600px] max-h-[600px] rounded-full blur-3xl animate-breathe z-[6]"
         style={{ backgroundColor: "#f7f5f0", opacity: 0.2 }}
       />
 
@@ -162,7 +136,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.4 }}
-          className="font-display text-5xl md:text-7xl font-light leading-tight mb-6"
+          className="font-display text-4xl sm:text-5xl md:text-7xl font-light leading-tight mb-6"
           style={{ color: "#f7f5f0" }}
         >
           Find Your Flow with
@@ -226,5 +200,83 @@ export default function Hero() {
 
       <WaveBottom fill="#f7f5f0" />
     </section>
+  );
+}
+
+function RotatingSpiral({
+  count,
+  BASE_RADIUS,
+  RADIUS_STEP,
+  MAX_RADIUS,
+  ANGLE_SPREAD,
+  VERTICAL_STEP,
+  IMG_W,
+  IMG_H,
+}) {
+  const angle = useMotionValue(0);
+
+  useAnimationFrame((_, delta) => {
+    angle.set(angle.get() + (delta / 1000) * 7);
+  });
+
+  return (
+    <div
+      className="absolute inset-0 flex items-center justify-center"
+      style={{ perspective: "1600px" }}
+    >
+      <div className="relative" style={{ transformStyle: "preserve-3d" }}>
+        {spiralImages.map((img, i) => {
+          const offsetAngle = (ANGLE_SPREAD / count) * i;
+          const radius = BASE_RADIUS + RADIUS_STEP * i;
+          const verticalOffset = (i - (count - 1) / 2) * VERTICAL_STEP;
+
+          return (
+            <SpiralItem
+              key={img.src}
+              img={img}
+              offsetAngle={offsetAngle}
+              radius={radius}
+              verticalOffset={verticalOffset}
+              ringAngle={angle}
+              MAX_RADIUS={MAX_RADIUS}
+              IMG_W={IMG_W}
+              IMG_H={IMG_H}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SpiralItem({ img, offsetAngle, radius, verticalOffset, ringAngle, MAX_RADIUS, IMG_W, IMG_H }) {
+  const currentAngle = useTransform(ringAngle, (a) => a + offsetAngle);
+
+  const x = useTransform(currentAngle, (a) => radius * Math.sin((a * Math.PI) / 180));
+  const z = useTransform(currentAngle, (a) => radius * Math.cos((a * Math.PI) / 180));
+  const faceRotateY = useTransform(currentAngle, (a) => -a);
+
+  const opacity = useTransform(z, [-MAX_RADIUS, MAX_RADIUS], [0.3, 1]);
+  const scale = useTransform(z, [-MAX_RADIUS, MAX_RADIUS], [0.6, 1]);
+
+  return (
+    <motion.div
+      className="absolute top-1/2 left-1/2 rounded-2xl overflow-hidden shadow-2xl"
+      style={{
+        width: IMG_W,
+        height: IMG_H,
+        marginTop: -IMG_H / 2,
+        marginLeft: -IMG_W / 2,
+        x,
+        y: verticalOffset,
+        z,
+        rotateY: faceRotateY,
+        opacity,
+        scale,
+        transformStyle: "preserve-3d",
+      }}
+    >
+      <img src={img.src} alt={img.alt} className="w-full h-full object-cover" />
+    </motion.div>
   );
 }
