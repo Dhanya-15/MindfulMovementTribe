@@ -49,43 +49,67 @@ const count = spiralImages.length;
 const BASE_RADIUS_DESKTOP = 130;
 const RADIUS_STEP_DESKTOP = Math.max(28, 260 / count);
 const IMG_W_DESKTOP = Math.max(180, 280 - count * 8);
+const VERTICAL_STEP_DESKTOP = Math.max(14, 160 / count);
 
-// Small hook to track viewport width so the spiral can rescale live
-// (including on resize/orientation change), not just on first load.
-function useViewportWidth() {
-  const [width, setWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1024
+// Tracks viewport width AND height, since on mobile the vertical spread
+// needs to be driven by how tall the screen actually is (to fill the
+// gap between the logo/menu bar and the buttons), not just width.
+function useViewportSize() {
+  const [size, setSize] = useState(
+    typeof window !== "undefined"
+      ? { width: window.innerWidth, height: window.innerHeight }
+      : { width: 1024, height: 768 }
   );
 
   useEffect(() => {
-    const onResize = () => setWidth(window.innerWidth);
+    const onResize = () =>
+      setSize({ width: window.innerWidth, height: window.innerHeight });
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
   }, []);
 
-  return width;
+  return size;
 }
 
-// Returns a single scale factor for the whole spiral geometry based on
-// viewport width, so radius/step/image size all shrink together and stay
-// proportional at any screen size, while still rotating in full 3D.
+// Horizontal/depth scale factor - controls radius and image width.
 function getSpiralScale(width) {
-  if (width < 400) return 0.45;
-  if (width < 640) return 0.55;
+  if (width < 400) return 0.4;
+  if (width < 640) return 0.48;
   if (width < 768) return 0.7;
   if (width < 1024) return 0.85;
   return 1;
 }
 
+// Vertical spread factor is separate from horizontal scale on mobile:
+// we want the ring to fan out tall enough to cover the space between
+// the header and the CTA buttons, even though each image is small and
+// the radius is tight. This returns a multiplier applied on top of
+// VERTICAL_STEP_DESKTOP.
+function getVerticalSpreadMultiplier(width, height) {
+  if (width < 640) {
+    // Taller phones get a bit more vertical fan so the ring doesn't
+    // bunch up in the middle third of the screen.
+    return Math.min(3.2, Math.max(2.2, height / 260));
+  }
+  if (width < 1024) return 1.4;
+  return 1;
+}
+
 export default function Hero() {
-  const viewportWidth = useViewportWidth();
+  const { width: viewportWidth, height: viewportHeight } = useViewportSize();
   const scale = getSpiralScale(viewportWidth);
+  const verticalMultiplier = getVerticalSpreadMultiplier(viewportWidth, viewportHeight);
+  const isMobile = viewportWidth < 640;
 
   const BASE_RADIUS = BASE_RADIUS_DESKTOP * scale;
   const RADIUS_STEP = RADIUS_STEP_DESKTOP * scale;
   const MAX_RADIUS = BASE_RADIUS + RADIUS_STEP * (count - 1);
   const ANGLE_SPREAD = 360 * (1 + count * 0.08);
-  const VERTICAL_STEP = Math.max(14, 160 / count) * scale;
+  const VERTICAL_STEP = VERTICAL_STEP_DESKTOP * scale * verticalMultiplier;
 
   const IMG_W = IMG_W_DESKTOP * scale;
   const IMG_H = Math.round(IMG_W * 1.35);
@@ -105,20 +129,22 @@ export default function Hero() {
         VERTICAL_STEP={VERTICAL_STEP}
         IMG_W={IMG_W}
         IMG_H={IMG_H}
+        isMobile={isMobile}
       />
 
       <div
         className="absolute inset-0 z-[5]"
         style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(141,159,180,0.55) 0%, rgba(141,159,180,0.85) 65%, #8d9fb4 100%)",
+          background: isMobile
+            ? "radial-gradient(ellipse at center, rgba(141,159,180,0.35) 0%, rgba(141,159,180,0.6) 65%, #8d9fb4 100%)"
+            : "radial-gradient(ellipse at center, rgba(141,159,180,0.55) 0%, rgba(141,159,180,0.85) 65%, #8d9fb4 100%)",
         }}
       />
 
       <div
         aria-hidden="true"
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85vw] h-[85vw] max-w-[600px] max-h-[600px] rounded-full blur-3xl animate-breathe z-[6]"
-        style={{ backgroundColor: "#f7f5f0", opacity: 0.2 }}
+        style={{ backgroundColor: "#f7f5f0", opacity: 0.15 }}
       />
 
       <div className="relative z-10 text-center px-6 max-w-3xl">
@@ -212,6 +238,7 @@ function RotatingSpiral({
   VERTICAL_STEP,
   IMG_W,
   IMG_H,
+  isMobile,
 }) {
   const angle = useMotionValue(0);
 
@@ -241,6 +268,7 @@ function RotatingSpiral({
               MAX_RADIUS={MAX_RADIUS}
               IMG_W={IMG_W}
               IMG_H={IMG_H}
+              isMobile={isMobile}
             />
           );
         })}
@@ -249,15 +277,36 @@ function RotatingSpiral({
   );
 }
 
-function SpiralItem({ img, offsetAngle, radius, verticalOffset, ringAngle, MAX_RADIUS, IMG_W, IMG_H }) {
+function SpiralItem({
+  img,
+  offsetAngle,
+  radius,
+  verticalOffset,
+  ringAngle,
+  MAX_RADIUS,
+  IMG_W,
+  IMG_H,
+  isMobile,
+}) {
   const currentAngle = useTransform(ringAngle, (a) => a + offsetAngle);
 
   const x = useTransform(currentAngle, (a) => radius * Math.sin((a * Math.PI) / 180));
   const z = useTransform(currentAngle, (a) => radius * Math.cos((a * Math.PI) / 180));
   const faceRotateY = useTransform(currentAngle, (a) => -a);
 
-  const opacity = useTransform(z, [-MAX_RADIUS, MAX_RADIUS], [0.3, 1]);
-  const scale = useTransform(z, [-MAX_RADIUS, MAX_RADIUS], [0.6, 1]);
+  // On mobile, raise the opacity floor so images at the back of the ring
+  // stay visibly present across the screen instead of nearly disappearing
+  // (that's what was making the middle of the hero look empty).
+  const opacity = useTransform(
+    z,
+    [-MAX_RADIUS, MAX_RADIUS],
+    isMobile ? [0.55, 1] : [0.3, 1]
+  );
+  const scale = useTransform(
+    z,
+    [-MAX_RADIUS, MAX_RADIUS],
+    isMobile ? [0.75, 1] : [0.6, 1]
+  );
 
   return (
     <motion.div
