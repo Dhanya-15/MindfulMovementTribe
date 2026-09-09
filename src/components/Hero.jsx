@@ -251,7 +251,7 @@ function RotatingSpiral({
       className="absolute inset-0 flex items-center justify-center"
       style={{
         perspective: "1600px",
-        transform: isMobile ? "translateY(-8%)" : "none",
+        transform: isMobile ? "translateY(-12%)" : "none",
       }}
     >
       <div className="relative" style={{ transformStyle: "preserve-3d" }}>
