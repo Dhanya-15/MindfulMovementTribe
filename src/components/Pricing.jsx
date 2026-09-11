@@ -6,7 +6,13 @@ import {
   useTransform,
   useSpring,
 } from "framer-motion";
-import { HiSparkles, HiOutlineHeart, HiOutlineCalendar } from "react-icons/hi";
+import {
+  HiSparkles,
+  HiOutlineHeart,
+  HiOutlineCalendar,
+  HiOutlineClock,
+  HiOutlineGlobeAlt,
+} from "react-icons/hi";
 
 function FeatureChip({ icon, label }) {
   return (
@@ -95,15 +101,56 @@ export default function Pricing() {
                 <br />
                 <span className="italic">so is your plan</span>
               </h2>
-              <p className="font-body text-navy-slate/70 mb-6 max-w-md mx-auto">
+
+              <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="font-body text-navy-slate/70 mb-5 max-w-md mx-auto"
+              >
                 Pricing is tailored to your goals, format, and frequency. Reach
                 out and the team will help you find the right fit.
-              </p>
+              </motion.p>
 
-              <div className="flex flex-wrap items-center justify-center gap-3 mb-9">
+              {/* Small animated accent divider between the two paragraphs */}
+              <motion.div
+                initial={{ scaleX: 0, opacity: 0 }}
+                whileInView={{ scaleX: 1, opacity: 1 }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ duration: 0.5, delay: 0.25 }}
+                className="w-12 h-px mx-auto mb-5 bg-sand"
+              />
+
+              <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ duration: 0.6, delay: 0.35 }}
+                className="font-body text-navy-slate/70 mb-6 max-w-md mx-auto"
+              >
+                <span className="font-medium text-navy-slate">30–60 minute</span>{" "}
+                sessions for every level. Offline in{" "}
+                <span className="font-medium text-navy-slate">Bangalore</span>,
+                online{" "}
+                <span className="font-medium text-navy-slate">
+                  anywhere in the world
+                </span>
+                . Timings are flexible.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.6, delay: 0.45 }}
+                className="flex flex-wrap items-center justify-center gap-3 mb-9"
+              >
                 <FeatureChip icon={<HiOutlineHeart />} label="Personalized goals" />
-                <FeatureChip icon={<HiOutlineCalendar />} label="Flexible frequency" />
-              </div>
+                <FeatureChip icon={<HiOutlineClock />} label="30–60 min sessions" />
+                <FeatureChip icon={<HiOutlineGlobeAlt />} label="Bangalore & worldwide online" />
+                <FeatureChip icon={<HiOutlineCalendar />} label="Flexible timings" />
+              </motion.div>
 
               
               <a href="#contact"

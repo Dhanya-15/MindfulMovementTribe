@@ -420,8 +420,7 @@ export default function Classes() {
             className="font-body max-w-xl mx-auto"
             style={{ color: "#132430" }}
           >
-            30–60 minute sessions for every level. Offline in Bangalore, online
-            anywhere in the world. Timings are flexible.
+      
           </p>
         </motion.div>
 
