@@ -75,7 +75,11 @@ export default function Certifications() {
         </motion.div>
 
         <div className="relative">
-          <div className="hidden md:block absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px overflow-hidden" style={{ backgroundColor: "#132430", opacity: 0.3 }}>
+          {/* Timeline line - now visible on mobile too, positioned left instead of centered */}
+          <div
+            className="absolute top-0 bottom-0 left-[18px] md:left-1/2 md:-translate-x-1/2 w-px overflow-hidden"
+            style={{ backgroundColor: "#132430", opacity: 0.3 }}
+          >
             <motion.div
               className="absolute left-0 w-full h-24"
               style={{
@@ -108,7 +112,7 @@ export default function Certifications() {
                   damping: 14,
                 }}
                 style={{ transformStyle: "preserve-3d" }}
-                className={`relative flex md:items-center mb-8 md:mb-12 last:mb-0 ${
+                className={`relative flex md:items-center mb-8 md:mb-12 last:mb-0 pl-10 md:pl-0 ${
                   fromLeft ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
               >
@@ -125,17 +129,16 @@ export default function Certifications() {
                       transition: { duration: 0.4 },
                     }}
                     style={{
-                      transformStyle: "preserve-3d",
                       boxShadow:
                         "0 10px 15px -3px rgba(0,21,50,0.15), 0 20px 40px -10px rgba(0,21,50,0.2)",
+                      backgroundColor: "#f5f2ea",
                     }}
-                    className="rounded-xl p-6 border cursor-default w-full md:max-w-md flex"
+                    className="rounded-xl p-6 border cursor-default w-full md:max-w-md flex flex-col justify-center min-h-[150px] sm:min-h-[160px]"
                   >
                     <div
-                      className={`rounded-xl p-6 border -m-6 w-full flex flex-col justify-center min-h-[150px] sm:min-h-[160px] ${
+                      className={`flex flex-col justify-center ${
                         fromLeft ? "md:text-right md:items-end" : "md:items-start"
                       }`}
-                      style={{ backgroundColor: "#f5f2ea", borderColor: "#13243033" }}
                     >
                       <p className="font-display text-xl sm:text-2xl mb-1" style={{ color: "#001532" }}>
                         {cert.title}
@@ -148,8 +151,9 @@ export default function Certifications() {
                   </motion.div>
                 </div>
 
+                {/* Pulsing dot - now visible on mobile too, aligned to the left timeline */}
                 <motion.div
-                  className="hidden md:flex w-5 h-5 rounded-full absolute left-1/2 -translate-x-1/2 items-center justify-center"
+                  className="flex w-5 h-5 rounded-full absolute left-[18px] -translate-x-1/2 md:left-1/2 items-center justify-center"
                   style={{ backgroundColor: "#001532" }}
                   animate={{
                     y: [0, -6, 0],
