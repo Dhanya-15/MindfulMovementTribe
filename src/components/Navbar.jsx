@@ -52,14 +52,26 @@ export default function Navbar() {
   // getting cancelled because the <a> unmounts mid-navigation when the menu
   // closes), scrolls to the target section manually, then closes the menu.
   const handleMobileNavClick = (e, href) => {
-    e.preventDefault();
-    const id = href.replace("#", "");
-    const target = document.getElementById(id);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+  e.preventDefault();
+  const id = href.replace("#", "");
+  const target = document.getElementById(id);
+  if (target) {
     setMenuOpen(false);
-  };
+    // Wait for the mobile menu's collapse animation/layout shift to finish
+    // before measuring position - otherwise the offset is calculated while
+    // the page is still taller (menu open), landing short.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const rect = target.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const targetY = rect.top + scrollTop;
+        window.scrollTo({ top: targetY, behavior: "smooth" });
+      });
+    });
+  } else {
+    setMenuOpen(false);
+  }
+};
 
   return (
     <motion.header
