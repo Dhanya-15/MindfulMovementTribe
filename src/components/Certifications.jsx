@@ -151,9 +151,8 @@ export default function Certifications() {
                   </motion.div>
                 </div>
 
-                {/* Pulsing dot - now visible on mobile too, aligned to the left timeline */}
                 <motion.div
-                  className="flex w-5 h-5 rounded-full absolute left-[18px] -translate-x-1/2 md:left-1/2 items-center justify-center"
+                  className="flex w-5 h-5 rounded-full absolute left-[18px] -translate-x-1/2 top-1/2 -translate-y-1/2 md:left-1/2 md:top-1/2 items-center justify-center"
                   style={{ backgroundColor: "#001532" }}
                   animate={{
                     y: [0, -6, 0],
