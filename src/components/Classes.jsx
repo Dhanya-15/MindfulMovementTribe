@@ -261,7 +261,7 @@ function ClassCarousel() {
             exit="exit"
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             style={{ transformStyle: "preserve-3d" }}
-            className="relative w-full rounded-2xl p-8 md:p-10 border shadow-2xl flex flex-col justify-center min-h-[380px] sm:min-h-[420px] md:min-h-[460px]"
+            className="relative w-full rounded-2xl p-8 md:p-10 pb-10 md:pb-12 border shadow-2xl flex flex-col justify-center min-h-[380px] sm:min-h-[420px] md:min-h-[460px]"
           >
             <div
               className="absolute inset-0 rounded-2xl -z-10"
@@ -304,11 +304,32 @@ function ClassCarousel() {
                 </motion.li>
               ))}
             </ul>
+
+            {/* Counter inside the card - desktop only */}
+            <div
+              className="hidden md:block absolute bottom-6 left-1/2 -translate-x-1/2 font-display text-sm tracking-widest text-center"
+              style={{ color: "#001532" }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={index}
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  transition={{ duration: 0.25 }}
+                  className="inline-block"
+                >
+                  {index + 1}
+                </motion.span>
+              </AnimatePresence>
+              <span className="mx-1">/</span>
+              {total}
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Single set of controls: arrows + counter, outside the card, for all screen sizes */}
+      {/* Mobile-only controls: arrows + counter, outside the card */}
       <div className="flex items-center justify-center gap-6 mt-7">
         <button
           onClick={goPrev}
@@ -321,7 +342,7 @@ function ClassCarousel() {
           </svg>
         </button>
 
-        <div className="font-display text-sm tracking-widest w-12 text-center" style={{ color: "#001532" }}>
+        <div className="font-display text-sm tracking-widest w-12 text-center md:hidden" style={{ color: "#001532" }}>
           <AnimatePresence mode="wait">
             <motion.span
               key={index}
