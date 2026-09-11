@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiChevronLeft, HiChevronRight, HiPlay, HiX } from "react-icons/hi";
 import { testimonials } from "../content";
@@ -58,6 +58,13 @@ function Sticker({ className, rotate = 0, size = 40, color = "#d9c896", delay = 
   );
 }
 
+// A testimonial "has video" if any of its mediaIds entries are type
+// "video" (each person can have a mix of images and videos), rather
+// than checking a single top-level mediaType field.
+function hasVideo(testimonial) {
+  return testimonial.mediaIds?.some((m) => m.type === "video");
+}
+
 function Avatar({ testimonial }) {
   const initials = testimonial.name
     .split(" ")
@@ -68,7 +75,7 @@ function Avatar({ testimonial }) {
   return (
     <div className="relative w-16 h-16 rounded-full bg-navy-deep flex items-center justify-center flex-shrink-0">
       <span className="font-display text-2xl text-sky">{initials}</span>
-      {testimonial.mediaType === "video" && (
+      {hasVideo(testimonial) && (
         <div
           className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center"
           style={{ backgroundColor: "#d9c896" }}
@@ -80,10 +87,78 @@ function Avatar({ testimonial }) {
   );
 }
 
-function TestimonialCard({ testimonial, onOpen, index }) {
+// Single preview tile shown on the card: just the first media item, plus a
+// "+N more" badge when there's more than one, and a "View more" label under
+// it. Clicking either opens the full gallery lightbox starting at index 0.
+function MediaPreview({ testimonial, onOpen }) {
+  const items = testimonial.mediaIds;
+  if (!items?.length) return null;
+
+  const first = items[0];
+  const remaining = items.length - 1;
+
   return (
-    <motion.button
-      onClick={() => onOpen(testimonial)}
+    <div className="mt-4">
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation(); // don't also trigger the card's onOpen(testimonial)
+          onOpen(testimonial, 0);
+        }}
+        className="relative aspect-square rounded-lg overflow-hidden border border-steel/30 w-20 sm:w-24 block"
+      >
+        {first.type === "video" ? (
+          <>
+            <video
+              src={first.src}
+              muted
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-cover pointer-events-none"
+            />
+            <div className="absolute inset-0 bg-navy-deep/30 flex items-center justify-center">
+              <HiPlay className="text-cream text-lg" />
+            </div>
+          </>
+        ) : (
+          <img
+            src={first.src}
+            alt="Testimonial preview"
+            className="w-full h-full object-cover pointer-events-none"
+          />
+        )}
+
+        {remaining > 0 && (
+          <div className="absolute inset-0 bg-navy-deep/0 hover:bg-navy-deep/10 transition-colors" />
+        )}
+        {remaining > 0 && (
+          <div
+            className="absolute bottom-1 right-1 rounded-full px-1.5 py-0.5 text-[10px] font-body font-semibold"
+            style={{ backgroundColor: "#001532", color: "#f5f2ea" }}
+          >
+            +{remaining}
+          </div>
+        )}
+      </button>
+
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen(testimonial, 0);
+        }}
+        className="font-body text-xs mt-2 hover:underline block"
+        style={{ color: "#d9c896" }}
+      >
+        View more ({testimonial.mediaCount} item{testimonial.mediaCount > 1 ? "s" : ""})
+      </button>
+    </div>
+  );
+}
+
+function TestimonialCard({ testimonial, onOpen, onOpenGallery, index }) {
+  return (
+    <motion.div
       whileHover={{ y: -6, rotateY: 4 }}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
@@ -95,32 +170,38 @@ function TestimonialCard({ testimonial, onOpen, index }) {
         className="absolute inset-0 rounded-2xl -z-10"
         style={{ backgroundColor: "#f5f2ea", borderColor: "#13243033" }}
       />
-      <div className="flex items-center gap-4 mb-4">
-        <Avatar testimonial={testimonial} />
-        <div>
-          <p className="font-display text-xl" style={{ color: "#001532" }}>
-            {testimonial.name}
-          </p>
-          <p className="font-body text-xs" style={{ color: "#132430", opacity: 0.65 }}>
-            {testimonial.location}
-          </p>
-        </div>
-      </div>
-      <p
-        className="font-display italic text-sm leading-relaxed line-clamp-3"
-        style={{ color: "#132430" }}
+
+      <button
+        type="button"
+        onClick={() => onOpen(testimonial)}
+        className="w-full text-left"
       >
-        "{testimonial.quote}"
-      </p>
-      <p className="font-body text-xs mt-4" style={{ color: "#d9c896" }}>
-        {testimonial.mediaCount} {testimonial.mediaType}
-        {testimonial.mediaCount > 1 ? "s" : ""} · Read more
-      </p>
-    </motion.button>
+        <div className="flex items-center gap-4 mb-4">
+          <Avatar testimonial={testimonial} />
+          <div>
+            <p className="font-display text-xl" style={{ color: "#001532" }}>
+              {testimonial.name}
+            </p>
+            <p className="font-body text-xs" style={{ color: "#132430", opacity: 0.65 }}>
+              {testimonial.location}
+            </p>
+          </div>
+        </div>
+        <p
+          className="font-display italic text-sm leading-relaxed line-clamp-3"
+          style={{ color: "#132430" }}
+        >
+          "{testimonial.quote}"
+        </p>
+      </button>
+
+      {/* Single preview tile + "View more" — opens the full gallery */}
+      <MediaPreview testimonial={testimonial} onOpen={onOpenGallery} />
+    </motion.div>
   );
 }
 
-function DetailModal({ testimonial, onClose }) {
+function DetailModal({ testimonial, onClose, onOpenGallery }) {
   if (!testimonial) return null;
 
   return (
@@ -172,23 +253,148 @@ function DetailModal({ testimonial, onClose }) {
             "{testimonial.quote}"
           </p>
 
-          <div className="grid grid-cols-3 gap-2">
-            {testimonial.mediaIds.map((id) => (
-              <div
-                key={id}
-                className="aspect-square rounded-lg bg-sky/40 border border-dashed border-steel/40 flex items-center justify-center"
-              >
-                {testimonial.mediaType === "video" ? (
-                  <HiPlay className="text-navy-slate/40 text-xl" />
-                ) : (
-                  <span className="font-body text-[10px] text-navy-slate/40 px-1 text-center">
-                    {id}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+          {/* Single preview tile + "View more" here too, instead of the full grid */}
+          <MediaPreview testimonial={testimonial} onOpen={onOpenGallery} />
         </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+// Full gallery lightbox: shows every image/video attached to a testimonial,
+// one at a time, with left/right arrow navigation (buttons + keyboard +
+// swipe). Shown on top of everything, including the detail modal. Works the
+// same on mobile and desktop — media is always capped to the viewport so
+// it's never cropped or overflowing.
+function MediaGalleryLightbox({ testimonial, startIndex, onClose }) {
+  const [index, setIndex] = useState(startIndex ?? 0);
+
+  // Reset to the clicked item whenever a new testimonial's gallery opens
+  useEffect(() => {
+    setIndex(startIndex ?? 0);
+  }, [testimonial, startIndex]);
+
+  const items = testimonial?.mediaIds ?? [];
+  const total = items.length;
+
+  const goNext = useCallback(() => {
+    setIndex((i) => (i + 1) % total);
+  }, [total]);
+
+  const goPrev = useCallback(() => {
+    setIndex((i) => (i - 1 + total) % total);
+  }, [total]);
+
+  // Keyboard navigation (desktop) — arrow keys + Escape
+  useEffect(() => {
+    if (!testimonial) return;
+    const handleKey = (e) => {
+      if (e.key === "ArrowRight") goNext();
+      else if (e.key === "ArrowLeft") goPrev();
+      else if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [testimonial, goNext, goPrev, onClose]);
+
+  if (!testimonial || total === 0) return null;
+
+  const current = items[index];
+
+  // Simple touch-swipe support (mobile) — left/right swipe changes item
+  let touchStartX = 0;
+  const handleTouchStart = (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+  };
+  const handleTouchEnd = (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) < 40) return; // ignore small taps/drags
+    if (dx < 0) goNext();
+    else goPrev();
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[70] bg-black/90 flex items-center justify-center p-4"
+        onClick={onClose}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-5 right-5 text-cream/70 hover:text-cream text-3xl z-20"
+          aria-label="Close"
+        >
+          <HiX />
+        </button>
+
+        {/* Counter */}
+        <div
+          className="absolute top-6 left-1/2 -translate-x-1/2 font-body text-sm tracking-widest z-20"
+          style={{ color: "#f5f2ea" }}
+        >
+          {index + 1} / {total}
+        </div>
+
+        {/* Prev arrow */}
+        {total > 1 && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              goPrev();
+            }}
+            className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center z-20 bg-black/40 hover:bg-black/60 text-cream text-xl sm:text-2xl transition-colors"
+            aria-label="Previous media"
+          >
+            <HiChevronLeft />
+          </button>
+        )}
+
+        {/* Next arrow */}
+        {total > 1 && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              goNext();
+            }}
+            className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center z-20 bg-black/40 hover:bg-black/60 text-cream text-xl sm:text-2xl transition-colors"
+            aria-label="Next media"
+          >
+            <HiChevronRight />
+          </button>
+        )}
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.25 }}
+            onClick={(e) => e.stopPropagation()}
+            className="max-w-[92vw] max-h-[80vh] flex items-center justify-center"
+          >
+            {current.type === "video" ? (
+              <video
+                src={current.src}
+                controls
+                autoPlay
+                playsInline
+                className="max-w-[92vw] max-h-[80vh] rounded-lg"
+              />
+            ) : (
+              <img
+                src={current.src}
+                alt={`${testimonial.name} testimonial media ${index + 1}`}
+                className="max-w-[92vw] max-h-[80vh] rounded-lg object-contain"
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </motion.div>
     </AnimatePresence>
   );
@@ -196,8 +402,16 @@ function DetailModal({ testimonial, onClose }) {
 
 export default function Testimonials() {
   const [selected, setSelected] = useState(null);
+  const [gallery, setGallery] = useState({ testimonial: null, index: 0 });
   const [page, setPage] = useState(0);
   const [direction, setDirection] = useState(1);
+
+  const openGallery = (testimonial, index = 0) => {
+    setGallery({ testimonial, index });
+  };
+  const closeGallery = () => {
+    setGallery({ testimonial: null, index: 0 });
+  };
 
   const goNext = () => {
     setDirection(1);
@@ -302,7 +516,13 @@ export default function Testimonials() {
                 className="grid grid-cols-1 md:grid-cols-3 gap-6"
               >
                 {currentTrio.map((t, i) => (
-                  <TestimonialCard key={t.name} testimonial={t} onOpen={setSelected} index={i} />
+                  <TestimonialCard
+                    key={t.name}
+                    testimonial={t}
+                    onOpen={setSelected}
+                    onOpenGallery={openGallery}
+                    index={i}
+                  />
                 ))}
               </motion.div>
             </AnimatePresence>
@@ -332,7 +552,17 @@ export default function Testimonials() {
         </div>
       </div>
 
-      <DetailModal testimonial={selected} onClose={() => setSelected(null)} />
+      <DetailModal
+        testimonial={selected}
+        onClose={() => setSelected(null)}
+        onOpenGallery={openGallery}
+      />
+
+      <MediaGalleryLightbox
+        testimonial={gallery.testimonial}
+        startIndex={gallery.index}
+        onClose={closeGallery}
+      />
 
       <WaveBottom fill="#8d9fb4" />
     </section>
