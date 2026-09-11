@@ -225,7 +225,7 @@ function ClassCarousel() {
     <div className="w-full flex flex-col items-center">
       <div
         className="relative w-full max-w-lg"
-        style={{ perspective: "1600px", minHeight: "520px" }}
+        style={{ perspective: "1600px" }}
       >
         {/* Left arrow - positioned to the left of the card */}
         <button
@@ -261,7 +261,7 @@ function ClassCarousel() {
             exit="exit"
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             style={{ transformStyle: "preserve-3d" }}
-            className="absolute inset-0 rounded-2xl p-8 md:p-10 border shadow-2xl flex flex-col justify-center"
+            className="relative w-full rounded-2xl p-8 md:p-10 border shadow-2xl flex flex-col justify-center min-h-[380px] sm:min-h-[420px] md:min-h-[460px]"
           >
             <div
               className="absolute inset-0 rounded-2xl -z-10"
@@ -274,7 +274,7 @@ function ClassCarousel() {
               {cls.modes}
             </p>
             <h3
-              className="font-display text-3xl mb-5"
+              className="font-display text-2xl sm:text-3xl mb-5"
               style={{ color: "#001532" }}
             >
               {cls.name}
@@ -304,37 +304,16 @@ function ClassCarousel() {
                 </motion.li>
               ))}
             </ul>
-
-            {/* Bottom center counter, now inside the card */}
-            <div
-              className="absolute bottom-4 left-1/2 -translate-x-1/2 font-display text-sm tracking-widest text-center"
-              style={{ color: "#001532" }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={index}
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 6 }}
-                  transition={{ duration: 0.25 }}
-                  className="inline-block"
-                >
-                  {index + 1}
-                </motion.span>
-              </AnimatePresence>
-              <span className="mx-1">/</span>
-              {total}
-            </div>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Mobile-only controls, since side arrows are hidden below md */}
-      <div className="flex items-center justify-center gap-6 mt-7 md:hidden">
+      {/* Single set of controls: arrows + counter, outside the card, for all screen sizes */}
+      <div className="flex items-center justify-center gap-6 mt-7">
         <button
           onClick={goPrev}
           aria-label="Previous class"
-          className="w-10 h-10 rounded-full flex items-center justify-center border transition-colors duration-300 hover:bg-white/20"
+          className="w-10 h-10 rounded-full flex items-center justify-center border transition-colors duration-300 hover:bg-white/20 md:hidden"
           style={{ borderColor: "#001532", color: "#001532" }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -362,7 +341,7 @@ function ClassCarousel() {
         <button
           onClick={goNext}
           aria-label="Next class"
-          className="w-10 h-10 rounded-full flex items-center justify-center border transition-colors duration-300 hover:bg-white/20"
+          className="w-10 h-10 rounded-full flex items-center justify-center border transition-colors duration-300 hover:bg-white/20 md:hidden"
           style={{ borderColor: "#001532", color: "#001532" }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">

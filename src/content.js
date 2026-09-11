@@ -49,31 +49,31 @@ export const classes = [
     name: "1:1 Personal Yoga",
     modes: "Online & Offline",
     description:
-      "Our 1:1 personal yoga sessions are completely personalized around your body, goals, needs, and current level. Every session is thoughtfully modified based on your flexibility, fitness, health, and individual requirements. You receive personal guidance and dedicated attention throughout the practice. Each pose and movement can be adapted to ensure you practice safely, comfortably, and effectively. We provide continuous feedback on your alignment, breathing, and technique to help you improve. With focused personal care and support, you can build a yoga practice that truly works for you.",
+      "Our 1:1 Personal Yoga sessions are completely personalized around your body, goals, needs, and current level. Every session is thoughtfully adapted to your flexibility, fitness, health, and individual requirements, with dedicated guidance throughout the practice. Each pose and movement is modified for safe, comfortable, and effective practice, with continuous feedback on alignment, breathing, and technique. With focused personal care and support, you can build a yoga practice that truly works for you.",
   },
   {
     name: "Aerial Yoga",
     modes: "Offline only — Group & 1:1",
     description:
-      "Aerial Yoga uses silk supports to create a unique blend of movement, strength, and relaxation. The sessions include supported inversions, deep spinal traction, and playful strength work to help release tension and improve mobility. Each practice is designed to engage the full body while building balance, flexibility, and body awareness. Movements can be modified according to your comfort, experience, and ability. Whether you prefer the energy of a group class or the personalised attention of a 1:1 session, the practice can be adapted to suit you. Available exclusively offline in both group and 1:1 formats.",
+      "Aerial Yoga uses silk supports to create a unique blend of movement, strength, and relaxation. Sessions include supported inversions, deep spinal traction, and strength work to release tension and improve mobility while building balance, flexibility, and body awareness. Movements are adapted to your comfort, experience, and ability, whether you choose a group class or personalised 1:1 session. Available exclusively offline in both group and 1:1 formats.",
   },
   {
     name: "Women's Wellness Batches",
     modes: "Special Batches",
     description:
-      "Our Women’s Wellness Batches offer a dedicated and supportive space designed around the unique needs of women at every stage of life. The sessions focus on mindful movement, strength, flexibility, relaxation, and overall well-being. Practices are thoughtfully adapted to suit different fitness levels, experiences, and individual needs. Each session encourages you to connect with your body, build confidence, and develop a sustainable wellness routine. Whether you are beginning your wellness journey or looking to deepen your existing practice, these batches provide a comfortable environment to learn and grow. A welcoming space where movement, mindfulness, and women’s well-being come together.",
+      "Our Women’s Wellness Batches offer a dedicated and supportive space designed around the unique needs of women at every stage of life. Sessions focus on mindful movement, strength, flexibility, relaxation, and overall well-being, with practices thoughtfully adapted to different fitness levels, experiences, and individual needs. Each session encourages you to connect with your body, build confidence, and develop a sustainable wellness routine in a comfortable and welcoming environment.",
   },
   {
     name: "Workshops",
     modes: "Periodic",
     description:
-      "Our periodic workshops offer focused, deep-dive sessions designed to explore specific aspects of yoga and wellness in greater depth. Each workshop focuses on a particular theme, such as breathwork, meditation, mobility, flexibility, or inversion techniques. Sessions are structured to help you understand the practice, refine your technique, and build greater body awareness. You will receive practical guidance and focused instruction throughout the session. Workshops are suitable for different experience levels, with guidance adapted to your individual needs. These sessions provide an opportunity to learn, explore, and take your practice to the next level.",
+      "Our Periodic Workshops offer focused, deep-dive sessions exploring specific aspects of yoga and wellness, such as breathwork, meditation, mobility, flexibility, and inversion techniques. Each workshop provides practical guidance to help you understand the practice, refine your technique, and build greater body awareness. Suitable for different experience levels, sessions are adapted to individual needs, offering an opportunity to learn, explore, and take your practice to the next level.",
   },
   {
     name: "Kids Yoga",
     modes: "Kids Wellness",
     description:
-      "Our Kids Yoga sessions introduce children to yoga through fun, playful, and age-appropriate movements. The sessions combine simple yoga poses, breathing exercises, balance activities, and mindfulness to support physical strength, flexibility, focus, and body awareness. Each class is designed to keep children engaged while helping them develop healthy movement and relaxation habits. Activities are adapted to suit different ages and abilities, ensuring that every child can participate comfortably. Through a positive and encouraging environment, children can learn to enjoy movement, build confidence, and connect with their bodies and minds.",
+      "Our Kids Yoga sessions introduce children to yoga through fun, playful, and age-appropriate movements. Sessions combine simple poses, breathing exercises, balance activities, and mindfulness to support strength, flexibility, focus, and body awareness. Activities are adapted to different ages and abilities, creating a positive and engaging environment where children can build confidence, develop healthy movement and relaxation habits, and enjoy connecting with their bodies and minds.",
   },
 ];
 
