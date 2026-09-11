@@ -48,6 +48,19 @@ export default function Navbar() {
     return () => sections.forEach((section) => observer.unobserve(section));
   }, []);
 
+  // Handles mobile nav link taps: prevents the native hash jump (which was
+  // getting cancelled because the <a> unmounts mid-navigation when the menu
+  // closes), scrolls to the target section manually, then closes the menu.
+  const handleMobileNavClick = (e, href) => {
+    e.preventDefault();
+    const id = href.replace("#", "");
+    const target = document.getElementById(id);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    setMenuOpen(false);
+  };
+
   return (
     <motion.header
       initial={{ y: -80, opacity: 0 }}
@@ -127,7 +140,7 @@ export default function Navbar() {
                 <li key={link.href}>
                   
                     <a href={link.href}
-                    onClick={() => setMenuOpen(false)}
+                    onClick={(e) => handleMobileNavClick(e, link.href)}
                     className={isActive ? "text-sand" : ""}
                   >
                     {link.label}
@@ -138,7 +151,7 @@ export default function Navbar() {
             <li>
               
                 <a href="#contact"
-                onClick={() => setMenuOpen(false)}
+                onClick={(e) => handleMobileNavClick(e, "#contact")}
                 className="px-5 py-2 rounded-full bg-sand text-navy-deep font-medium"
               >
                 Join a Class
