@@ -17,7 +17,9 @@ import {
 function FeatureChip({ icon, label }) {
   return (
     <div
-      className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/50 border border-steel/20
+      className="flex flex-col sm:flex-row items-center sm:items-center justify-center sm:justify-start
+                 text-center sm:text-left gap-2 sm:gap-2.5 px-3 sm:px-4 py-3 sm:py-2 rounded-2xl sm:rounded-full
+                 bg-white/50 border border-steel/20 w-full h-full sm:w-auto sm:h-auto
                  shadow-[0_2px_5px_rgba(11,20,38,0.08),0_1px_0_rgba(255,255,255,0.6)_inset]
                  transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_6px_12px_rgba(11,20,38,0.12)]"
     >
@@ -27,7 +29,9 @@ function FeatureChip({ icon, label }) {
       >
         <span className="text-sky text-xs">{icon}</span>
       </span>
-      <span className="font-body text-sm text-navy-slate/80">{label}</span>
+      <span className="font-body text-xs sm:text-sm text-navy-slate/80 leading-snug">
+        {label}
+      </span>
     </div>
   );
 }
@@ -141,7 +145,7 @@ export default function Pricing() {
               >
                 <FeatureChip icon={<HiOutlineHeart />} label="Personalized goals" />
                 <FeatureChip icon={<HiOutlineClock />} label="30–60 min sessions" />
-                <FeatureChip icon={<HiOutlineGlobeAlt />} label="Bangalore & worldwide online" />
+                <FeatureChip icon={<HiOutlineGlobeAlt />} label="Bangalore - offline & worldwide - online" />
                 <FeatureChip icon={<HiOutlineCalendar />} label="Flexible timings" />
               </motion.div>
 
