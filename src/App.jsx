@@ -11,7 +11,7 @@ import Footer from "./components/Footer";
 
 function App() {
   return (
-    <div className="font-body">
+    <div className="font-body overflow-x-hidden w-full">
       <Navbar />
       <Hero />
       <About />
