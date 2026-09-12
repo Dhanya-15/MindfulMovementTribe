@@ -85,11 +85,39 @@ export const testimonials = [
       "Excellent quality yoga trainer. Amazing energy and positivity, with an approach full of patience — great for beginners through advanced students. Anyone with chronic pain can benefit from her regular program. Highly recommend.",
     mediaCount: 5,
     mediaIds: [
-      { type: "image", src: "/images/Testimonials/Sonya/sonya1.jpeg" },
-      { type: "image", src: "/images/Testimonials/Sonya/sonya2.jpeg" },
-      { type: "image", src: "/images/Testimonials/Sonya/sonya3.jpeg" },
-      { type: "video", src: "/videos/Testimonials/Sonya/sonya1.mp4" },
-      { type: "video", src: "/videos/Testimonials/Sonya/sonya2.mp4" },
+      { type: "image", src: "/images/Testimonials/Sonya/Sonia1.jpeg" },
+      { type: "image", src: "/images/Testimonials/Sonya/Sonia2.jpeg" },
+      { type: "image", src: "/images/Testimonials/Sonya/Sonia3.jpeg" },
+      { type: "video", src: "/videos/Testimonials/Sonya/Sonia.mp4" },
+      { type: "video", src: "/videos/Testimonials/Sonya/Sonia2.mp4" },
+    ],
+  },
+  {
+    name: "Dhanya",
+    location: "Student, Chennai",
+    quote:
+      "She'll train uniquely by knowing our strengths and weaknesses, making hard poses easy. I'd love to do yoga for hours with her.",
+    mediaCount: 5,
+    mediaIds: [
+      { type: "image", src: "/images/Testimonials/Dhanya/Dhanya1.jpeg" },
+      { type: "image", src: "/images/Testimonials/Dhanya/Dhanya2.jpeg" },
+      { type: "image", src: "/images/Testimonials/Dhanya/Dhanya3.jpeg" },
+      { type: "video", src: "/images/Testimonials/Dhanya/Dhanya4.jpeg" },
+      { type: "video", src: "/images/Testimonials/Dhanya/Dhanya5.jpeg" },
+    ],
+  },
+  {
+    name: "Anchana",
+    location: "IT Professional, Australia",
+    quote:
+      "Training with Rathi has helped my physical and mental health tremendously. She doesn't stop at cues — she explains the poses and their benefits. Yoga has become more enjoyable and interesting.",
+    mediaCount: 5,
+    mediaIds: [
+      { type: "image", src: "/images/Testimonials/Anchana/anchana.jpeg" },
+      { type: "image", src: "/images/Testimonials/Anchana/anchana2.jpeg" },
+      { type: "image", src: "/images/Testimonials/Anchana/anchana3.jpeg" },
+      { type: "video", src: "/videos/Testimonials/Anchana/anchana1.mp4" },
+      { type: "video", src: "/videos/Testimonials/Anchana/anchana2.mp4" },
     ],
   },
   {
@@ -148,20 +176,6 @@ export const testimonials = [
     ],
   },
   {
-    name: "Dhanya",
-    location: "Student, Chennai",
-    quote:
-      "She'll train uniquely by knowing our strengths and weaknesses, making hard poses easy. I'd love to do yoga for hours with her.",
-    mediaCount: 5,
-    mediaIds: [
-      { type: "image", src: "/images/Testimonials/Dhanya/dhanya1.jpeg" },
-      { type: "image", src: "/images/Testimonials/Dhanya/dhanya2.jpeg" },
-      { type: "image", src: "/images/Testimonials/Dhanya/dhanya3.jpeg" },
-      { type: "video", src: "/videos/Testimonials/Dhanya/dhanya1.mp4" },
-      { type: "video", src: "/videos/Testimonials/Dhanya/dhanya2.mp4" },
-    ],
-  },
-  {
     name: "Sathya Priya",
     location: "IT Professional, USA",
     quote:
@@ -173,20 +187,6 @@ export const testimonials = [
       { type: "image", src: "/images/Testimonials/SathyaPriya/sathyapriya3.jpeg" },
       { type: "video", src: "/videos/Testimonials/SathyaPriya/sathyapriya1.mp4" },
       { type: "video", src: "/videos/Testimonials/SathyaPriya/sathyapriya2.mp4" },
-    ],
-  },
-  {
-    name: "Anchana",
-    location: "IT Professional, Australia",
-    quote:
-      "Training with Rathi has helped my physical and mental health tremendously. She doesn't stop at cues — she explains the poses and their benefits. Yoga has become more enjoyable and interesting.",
-    mediaCount: 5,
-    mediaIds: [
-      { type: "image", src: "/images/Testimonials/Anchana/anchana.jpeg" },
-      { type: "image", src: "/images/Testimonials/Anchana/anchana2.jpeg" },
-      { type: "image", src: "/images/Testimonials/Anchana/anchana3.jpeg" },
-      { type: "video", src: "/videos/Testimonials/Anchana/anchana1.mp4" },
-      { type: "video", src: "/videos/Testimonials/Anchana/anchana2.mp4" },
     ],
   },
 ];

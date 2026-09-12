@@ -1,7 +1,37 @@
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { bio } from "../content";
 
+const CLIPS = [
+  "/videos/About/about1.mp4",
+  "/videos/About/about2.mp4",
+  "/videos/About/about3.mp4",
+];
+
 export default function About() {
+  // Index of the clip currently in the wide/active slot.
+  const [activeIndex, setActiveIndex] = useState(0);
+  const videoRefs = useRef([]);
+
+  const handleEnded = () => {
+    setActiveIndex((prev) => (prev + 1) % CLIPS.length);
+  };
+
+  // Play only the active video; pause every shrunk one so nothing plays
+  // while collapsed, and it resumes from the start next time it's active.
+  useEffect(() => {
+    CLIPS.forEach((_, i) => {
+      const v = videoRefs.current[i];
+      if (!v) return;
+      if (i === activeIndex) {
+        v.currentTime = 0;
+        v.play().catch(() => {});
+      } else {
+        v.pause();
+      }
+    });
+  }, [activeIndex]);
+
   return (
     <section id="about" className="py-24 bg-cream">
       <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
@@ -10,31 +40,41 @@ export default function About() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8 }}
-          className="relative h-[520px] [perspective:1500px]"
+          className="relative h-[520px] [perspective:1500px] flex gap-3"
         >
-          <motion.div
-            className="absolute top-0 left-0 w-[60%] h-[55%] rounded-2xl overflow-hidden shadow-2xl border border-sand/30"
-            style={{ transform: "rotateY(8deg) rotateX(2deg)" }}
-            whileHover={{ rotateY: 4, scale: 1.03, transition: { duration: 0.4 } }}
-          >
-            <video src="/videos/solo-session1.mp4" alt="Video1" className="w-full h-full object-cover" autoPlay muted loop playsInline />
-          </motion.div>
-
-          <motion.div
-            className="absolute bottom-0 right-0 w-[65%] h-[60%] rounded-2xl overflow-hidden shadow-2xl border border-sand/40 z-10"
-            style={{ transform: "rotateY(-6deg) rotateX(-2deg)" }}
-            whileHover={{ rotateY: -3, scale: 1.03, transition: { duration: 0.4 } }}
-          >
-            <video src="/videos/group-session1.mp4" className="w-full h-full object-cover" autoPlay muted loop playsInline />
-          </motion.div>
-
-          <motion.div
-            className="absolute top-[18%] left-[20%] w-[55%] h-[50%] rounded-2xl overflow-hidden shadow-2xl border-2 border-cream z-20"
-            style={{ transform: "rotateY(2deg)" }}
-            whileHover={{ rotateY: 0, scale: 1.05, transition: { duration: 0.4 } }}
-          >
-            <video src="/videos/wellness.mp4" className="w-full h-full object-cover" autoPlay muted loop playsInline />
-          </motion.div>
+          {/*
+            Each clip has a fixed slot index (0, 1, 2 left-to-right) that
+            never changes — only its width/state changes. The active clip
+            expands to fill the wide slot in place; the other two stay
+            collapsed as narrow side panels. No reordering, ever.
+          */}
+          {CLIPS.map((clip, i) => {
+            const isActive = i === activeIndex;
+            return (
+              <motion.div
+                key={clip}
+                animate={{ flexGrow: isActive ? 6 : 1 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className={`relative h-full rounded-2xl overflow-hidden border border-sand/30 flex-shrink-0 ${
+                  isActive ? "shadow-2xl z-20" : "shadow-xl z-10"
+                }`}
+                style={{
+                  flexBasis: isActive ? "0%" : "5rem",
+                  minWidth: isActive ? undefined : "4rem",
+                }}
+              >
+                <video
+                  ref={(el) => (videoRefs.current[i] = el)}
+                  src={clip}
+                  className="w-full h-full object-cover"
+                  muted
+                  playsInline
+                  onEnded={isActive ? handleEnded : undefined}
+                />
+                {!isActive && <div className="absolute inset-0 bg-navy-deep/10" />}
+              </motion.div>
+            );
+          })}
 
           <div className="absolute -inset-4 border border-sand/40 rounded-2xl -z-10" />
         </motion.div>

@@ -3,13 +3,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { classes } from "../content";
 
 const mediaItems = [
-  { type: "image", src: "/images/kids-1on1.jpg", alt: "Kids tutoring session 1" },
-  { type: "image", src: "/images/kids-group.jpg", alt: "Kids tutoring session 2" },
-  { type: "video", src: "/videos/group-session1.mp4", alt: "Kids tutoring video 1" },
-  { type: "image", src: "/images/group-session2.jpeg", alt: "Kids tutoring session 4" },
-  { type: "video", src: "/videos/solo-session1.mp4", alt: "Kids tutoring video 2" },
-  { type: "image", src: "/images/solo-session2.jpeg", alt: "Kids tutoring session 5" },
-  { type: "video", src: "/videos/wellness.mp4", alt: "Kids tutoring video 3" },
+  { type: "image", src: "/images/Classes/kids-1on1.jpg", alt: "Kids tutoring session 1" },
+  { type: "image", src: "/images/Classes/kids-group.jpg", alt: "Kids tutoring session 2" },
+  { type: "video", src: "/videos/Classes/group-session1.mp4", alt: "Kids tutoring video 1" },
+  { type: "image", src: "/images/Classes/group-session2.jpeg", alt: "Kids tutoring session 4" },
+  { type: "video", src: "/videos/Classes/solo-session1.mp4", alt: "Kids tutoring video 2" },
+  { type: "image", src: "/images/Classes/solo-session2.jpeg", alt: "Kids tutoring session 5" },
+  { type: "video", src: "/videos/Classes/wellness.mp4", alt: "Kids tutoring video 3" },
 ];
 
 function WaveTop({ fill }) {
