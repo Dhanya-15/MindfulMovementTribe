@@ -53,14 +53,15 @@ export default function About() {
             return (
               <motion.div
                 key={clip}
-                animate={{ flexGrow: isActive ? 6 : 1 }}
+                animate={{ flexGrow: isActive ? 20 : 1 }}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className={`relative h-full rounded-2xl overflow-hidden border border-sand/30 flex-shrink-0 ${
                   isActive ? "shadow-2xl z-20" : "shadow-xl z-10"
                 }`}
                 style={{
-                  flexBasis: isActive ? "0%" : "5rem",
-                  minWidth: isActive ? undefined : "4rem",
+                  flexBasis: isActive ? "0%" : "2.25rem",
+                  minWidth: isActive ? undefined : "1.75rem",
+                  maxWidth: isActive ? undefined : "3rem",
                 }}
               >
                 <video
