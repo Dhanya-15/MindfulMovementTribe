@@ -129,14 +129,7 @@ export default function Pricing() {
                 transition={{ duration: 0.6, delay: 0.35 }}
                 className="font-body text-navy-slate/70 mb-6 max-w-md mx-auto"
               >
-                <span className="font-medium text-navy-slate">30–60 minute</span>{" "}
-                sessions for every level. Offline in{" "}
-                <span className="font-medium text-navy-slate">Bangalore</span>,
-                online{" "}
-                <span className="font-medium text-navy-slate">
-                  anywhere in the world
-                </span>
-                . Timings are flexible.
+                
               </motion.p>
 
               <motion.div
@@ -144,7 +137,7 @@ export default function Pricing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.4 }}
                 transition={{ duration: 0.6, delay: 0.45 }}
-                className="flex flex-wrap items-center justify-center gap-3 mb-9"
+                className="grid grid-cols-2 sm:flex sm:flex-wrap items-stretch sm:items-center justify-center gap-3 mb-9"
               >
                 <FeatureChip icon={<HiOutlineHeart />} label="Personalized goals" />
                 <FeatureChip icon={<HiOutlineClock />} label="30–60 min sessions" />

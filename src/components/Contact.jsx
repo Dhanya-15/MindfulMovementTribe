@@ -9,11 +9,8 @@ import { FaWhatsapp, FaInstagram } from "react-icons/fa";
 import {
   contact,
   genderOptions,
-  ageGroupOptions,
   modeOptions,
-  lookingForOptions,
   contactModeOptions,
-  heardFromOptions,
 } from "../content";
 
 function Field({ label, required, children }) {
@@ -57,14 +54,9 @@ const initialForm = {
   name: "",
   gender: "",
   contactNumber: "",
-  instagram: "",
-  ageGroup: "",
-  city: "",
   preferredMode: "",
-  lookingFor: "",
   preferredContactMode: "",
   queries: "",
-  heardFrom: "",
 };
 
 export default function Contact() {
@@ -107,8 +99,8 @@ export default function Contact() {
           </p>
 
           <div className="space-y-5">
-            <a
-              href={`tel:${contact.phone.replace(/\s/g, "")}`}
+            
+              <a href={`tel:${contact.phone.replace(/\s/g, "")}`}
               className="flex items-center gap-4 group"
             >
               <div className="w-11 h-11 rounded-full bg-navy-deep flex items-center justify-center flex-shrink-0">
@@ -119,8 +111,8 @@ export default function Contact() {
               </span>
             </a>
 
-            <a
-              href={`https://wa.me/${contact.whatsapp.replace(/[\s+]/g, "")}`}
+            
+              <a href={`https://wa.me/${contact.whatsapp.replace(/[\s+]/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-4 group"
@@ -133,8 +125,8 @@ export default function Contact() {
               </span>
             </a>
 
-            <a
-              href={`mailto:${contact.email}`}
+            
+              <a href={`mailto:${contact.email}`}
               className="flex items-center gap-4 group"
             >
               <div className="w-11 h-11 rounded-full bg-navy-deep flex items-center justify-center flex-shrink-0">
@@ -145,8 +137,8 @@ export default function Contact() {
               </span>
             </a>
 
-            <a
-              href={`https://instagram.com/${contact.instagram}`}
+            
+            <a href={`https://instagram.com/${contact.instagram}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-4 group"
@@ -182,15 +174,6 @@ export default function Contact() {
           ) : (
             <form onSubmit={handleSubmit}>
               <div className="grid sm:grid-cols-2 gap-x-6">
-                <Field label="Email" required>
-                  <input
-                    type="email"
-                    required
-                    value={form.email}
-                    onChange={update("email")}
-                    className={inputClasses}
-                  />
-                </Field>
                 <Field label="Name" required>
                   <input
                     type="text"
@@ -200,6 +183,16 @@ export default function Contact() {
                     className={inputClasses}
                   />
                 </Field>
+                <Field label="Email" required>
+                  <input
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={update("email")}
+                    className={inputClasses}
+                  />
+                </Field>
+                
               </div>
 
               <Field label="Gender">
@@ -210,40 +203,12 @@ export default function Contact() {
                 />
               </Field>
 
-              <div className="grid sm:grid-cols-2 gap-x-6">
-                <Field label="Contact Number" required>
-                  <input
-                    type="tel"
-                    required
-                    value={form.contactNumber}
-                    onChange={update("contactNumber")}
-                    className={inputClasses}
-                  />
-                </Field>
-                <Field label="Instagram">
-                  <input
-                    type="text"
-                    value={form.instagram}
-                    onChange={update("instagram")}
-                    placeholder="@handle"
-                    className={inputClasses}
-                  />
-                </Field>
-              </div>
-
-              <Field label="Age Group">
-                <RadioGroup
-                  options={ageGroupOptions}
-                  value={form.ageGroup}
-                  onChange={update("ageGroup")}
-                />
-              </Field>
-
-              <Field label="City Living In">
+              <Field label="Contact Number" required>
                 <input
-                  type="text"
-                  value={form.city}
-                  onChange={update("city")}
+                  type="tel"
+                  required
+                  value={form.contactNumber}
+                  onChange={update("contactNumber")}
                   className={inputClasses}
                 />
               </Field>
@@ -256,36 +221,12 @@ export default function Contact() {
                 />
               </Field>
 
-              <Field label="Looking For">
-                <RadioGroup
-                  options={lookingForOptions}
-                  value={form.lookingFor}
-                  onChange={update("lookingFor")}
-                />
-              </Field>
-
-              <Field label="Preferred Mode of Contact">
-                <RadioGroup
-                  options={contactModeOptions}
-                  value={form.preferredContactMode}
-                  onChange={update("preferredContactMode")}
-                />
-              </Field>
-
               <Field label="Any Other Queries">
                 <textarea
                   rows={3}
                   value={form.queries}
                   onChange={update("queries")}
                   className={inputClasses}
-                />
-              </Field>
-
-              <Field label="How Did You Come to Know About Us">
-                <RadioGroup
-                  options={heardFromOptions}
-                  value={form.heardFrom}
-                  onChange={update("heardFrom")}
                 />
               </Field>
 
